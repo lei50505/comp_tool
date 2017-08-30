@@ -6,7 +6,7 @@ import sys
 
 import traceback
 
-from src.Book import *
+from book import *
 import time
 
 def do():
@@ -15,7 +15,7 @@ def do():
     try:
         print("请等待...")
 
-        inBook = loadBook("in.xlsx")
+        inBook = load_book("in.xlsx")
         
         if not inBook.hasSheet("Sheet1"):
             raise Exception("in.xlsx中不存在Sheet1")
@@ -36,7 +36,7 @@ def do():
         inSheet2.initNumColIndex()
 
         
-        outBook = createBook()
+        outBook = create_book()
         
         outSheet = outBook.active()
 
@@ -154,7 +154,7 @@ def do():
                 continue
 
             rowData = {}
-            cellVal = inSheet1.cell(sheet1RowIndex, inSheet1.numColIndex).getFloatVal()
+            cellVal = inSheet1.cell(sheet1RowIndex, inSheet1.numColIndex).get_float_val()
             if cellVal is None:
                 cellVal = 0
             if cellVal < 0:
@@ -186,7 +186,7 @@ def do():
                 
                 continue
             rowData = {}
-            cellVal = inSheet2.cell(sheet2RowIndex, inSheet2.numColIndex).getFloatVal()
+            cellVal = inSheet2.cell(sheet2RowIndex, inSheet2.numColIndex).get_float_val()
             if cellVal is None:
                 cellVal = 0
             if cellVal < 0:

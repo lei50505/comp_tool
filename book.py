@@ -5,57 +5,49 @@ from openpyxl import *
 from openpyxl.styles import *
 from openpyxl.styles.numbers import *
 
+from util import to_str, to_float
+
 import os
 
-
-def toFloat(val):        
-    try:
-        return float(val)
-    except:
-        return None
-
-def toStr(val):
-    if val is None:
-        return None
-    try:
-        val = str(val)
-        if val.strip() == "":
-            return None
-        else:
-            return val.strip()
-    except:
-        return None
-    
 class Cell():
+    '''doc'''
     def __init__(self, cell):
         self.cell = cell
 
-    def getVal(self):
+    def get_val(self):
+        '''doc'''
         return self.cell.value
 
-    def getFloatVal(self):
-        val = self.getVal()
-        return toFloat(val)
+    def get_float_val(self):
+        '''doc'''
+        val = self.get_val()
+        return to_float(val)
 
-    def getStrVal(self):
-        val = self.getVal()
-        return toStr(val)
-    
-    def setVal(self, val):
+    def get_str_val(self):
+        '''doc'''
+        val = self.get_val()
+        return to_str(val)
+
+    def set_val(self, val):
+        '''doc'''
         self.cell.value = val
 
     def setNumberFormatText(self):
+        '''doc'''
         self.cell.number_format = numbers.FORMAT_TEXT
 
     def setFillRed(self):
+        '''doc'''
         self.cell.fill = PatternFill(fill_type = "solid",\
                             start_color="FFCCFF",end_color="FFCCFF")
 
     def setFillBlue(self):
+        '''doc'''
         self.cell.fill = PatternFill(fill_type = "solid", \
                             start_color="CCFFFF", end_color="CCFFFF")
         
     def setBorderThin(self):
+        '''doc'''
         thinSide = Side(border_style="thin", color="000000")
         thinBorder = Border(top=thinSide, left=thinSide, \
                             right=thinSide, bottom=thinSide)
@@ -79,17 +71,21 @@ class Sheet():
         self.copyRowCount = 0
 
     def cell(self, row, col):
+        '''doc'''
         sheetCell = self.sheet.cell(row = row, column = col)
         cell = Cell(sheetCell)
         return cell
 
     def getMaxCol(self):
+        '''doc'''
         return self.sheet.max_column
 
     def getMaxRow(self):
+        '''doc'''
         return self.sheet.max_row
 
     def initNumColIndex(self):
+        '''doc'''
         maxCol = self.getMaxCol()
         maxRow = self.getMaxRow()
         
@@ -101,13 +97,13 @@ class Sheet():
             isStrCell = False
             for rowIndex in range(1, maxRow + 1):
                 cell = self.cell(rowIndex, colIndex)
-                floatVal = cell.getFloatVal()
+                floatVal = cell.get_float_val()
 
                 if isinstance(floatVal, float):
                     numCellCount += 1
                     continue
 
-                strVal = cell.getStrVal()
+                strVal = cell.get_str_val()
                 
                 if isinstance(strVal, str):
                     isStrCell = True
@@ -131,6 +127,7 @@ class Sheet():
         
 
     def initNumColDict(self):
+        '''doc'''
         
         if self.numColIndex is None:
             raise Exception("请先初始化numColIndex")
@@ -148,7 +145,7 @@ class Sheet():
         
         for rowIndex in range(1, maxRow + 1):
             cell = self.cell(rowIndex, self.numColIndex)
-            floatVal = cell.getFloatVal()
+            floatVal = cell.get_float_val()
             if isinstance(floatVal,float):
                 self.numValSet.add(floatVal)
                 self.numValList.append(floatVal)
@@ -164,6 +161,7 @@ class Sheet():
 
                 
     def initDiffNumRows(self):
+        '''doc'''
         self.diffNumRows = []
         for numRow in self.numRowList:
             val = self.numRowDict.get(numRow)
@@ -172,7 +170,8 @@ class Sheet():
                 self.diffNumRows.append(numRow)
 
     def getRowListByVal(self, val):
-        val = toFloat(val)
+        '''doc'''
+        val = to_float(val)
         ret = []
         for numRow in self.numRowList:
             v = self.numRowDict.get(numRow)
@@ -181,6 +180,7 @@ class Sheet():
         return ret
 
     def copyRowFromSheet(self, srcSheet, rowIndex, color):
+        '''doc'''
 
         copyRowCount = self.copyRowCount + 1
         srcSheetMaxCol = srcSheet.getMaxCol()
@@ -188,7 +188,7 @@ class Sheet():
         for srcSheetColIndex in range(1, srcSheetMaxCol + 1):
             srcCell = srcSheet.cell(rowIndex, srcSheetColIndex)
             tarCell = self.cell(copyRowCount, srcSheetColIndex)
-            tarCell.setVal(srcCell.getVal())
+            tarCell.set_val(srcCell.get_val())
 
             tarCell.setBorderThin()
             
@@ -208,10 +208,12 @@ class Book():
         self.book=book
 
     def active(self):
+        '''doc'''
         activeSheet = self.book.active
         return Sheet(activeSheet)
         
     def sheet(self,sheetName):
+        '''doc'''
        
         bookSheet = self.book[sheetName]
         sheet = Sheet(bookSheet)
@@ -219,6 +221,7 @@ class Book():
 
 
     def hasSheet(self, *sheetNames):
+        '''doc'''
 
         if len(sheetNames) == 0:
             return True
@@ -232,27 +235,26 @@ class Book():
         return True
 
     def save(self, path):
+        '''doc'''
         self.book.save(path)
 
     def close(self):
+        '''doc'''
         if self.book is not None:
             self.book.close()
         
 
-def createBook():
-    workBook =  Workbook(write_only=False)
-    book = Book(workBook)
+def create_book():
+    '''doc'''
+    work_book =  Workbook(write_only=False)
+    book = Book(work_book)
     return book
 
-def loadBook(filePath):
+def load_book(file_path):
+    '''doc'''
 
-    workBook = load_workbook(filePath, read_only = True, keep_vba = False, \
+    work_book = load_workbook(file_path, read_only = True, keep_vba = False, \
                     data_only = True, guess_types = False, keep_links = False)
-    book = Book(workBook)
+    book = Book(work_book)
     return book
 
-if "__main__" == __name__:
-    book = createBook()
-    sheet = book.active()
-    print(str(None))
-    
