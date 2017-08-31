@@ -1,2 +1,2 @@
-pyinstaller -F --clean -y --distpath "." ExcelTool.py
+pyinstaller -F --clean -y --distpath "." start.py
 pause
