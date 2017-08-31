@@ -22,24 +22,25 @@ class Data():
         self.data[key] = val
     def get(self, key):
         '''doc'''
-        return self.data[key]
+        return self.data.get(key)
 
 def to_float(val):
     '''doc'''
+    # pylint:disable=broad-except
     try:
         return float(val)
-    except:
+    except Exception:
         return None
 
 def to_str(val):
     '''doc'''
+    # pylint:disable=broad-except
     if val is None:
         return None
     try:
         val = str(val)
         if val.strip() == "":
             return None
-        else:
-            return val.strip()
-    except:
+        return val.strip()
+    except Exception:
         return None
