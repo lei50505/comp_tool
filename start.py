@@ -198,7 +198,9 @@ def main():
 if __name__ == "__main__":
     try:
         main()
+        print("2秒后退出")
         time.sleep(2)
     except Exception:
         print(traceback.format_exc())
+        print("10秒后退出")
         time.sleep(10)

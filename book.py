@@ -68,11 +68,16 @@ class Sheet():
         self.alone_val_rows = None
         self.max_row = None
         self.max_col = None
+        self.sheet_cell_dict = {}
 
     def get_cell(self, row, col):
         '''doc'''
+        sheet_cell = self.sheet_cell_dict.get((row, col))
+        if sheet_cell is not None:
+            return sheet_cell
         sheet_cell = self.sheet.cell(row=row, column=col)
         cell = Cell(sheet_cell)
+        self.sheet_cell_dict[row, col] = cell
         return cell
 
     def get_max_col(self):
@@ -264,6 +269,7 @@ class Book():
     def __init__(self, path):
         self.path = path
         self.book = None
+        self.book_sheet_dict = {}
 
     def get_active_sheet(self):
         '''doc'''
@@ -285,8 +291,11 @@ class Book():
 
     def get_sheet(self, sheet_name):
         '''doc'''
+        if self.book_sheet_dict.get(sheet_name) is not None:
+            return self.book_sheet_dict.get(sheet_name)
         book_sheet = self.book.get_sheet_by_name(sheet_name)
         sheet = Sheet(book_sheet)
+        self.book_sheet_dict[sheet_name] = sheet
         return sheet
 
     def get_sheet_names(self):
